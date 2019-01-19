@@ -1,0 +1,9 @@
+note over selain
+Selain lisää uuden muistiinpanon omaan HTML-
+dokumenttiinsa ja lähettää sitten muistiinpanon
+palvelimelle.
+end note
+
+selain->selain: notes.push(...)
+selain->palvelin: HTTP POST /new_note_spa [{ note: "muistiinpano" }]
+palvelin-->selain: [{ "message": "note created" }]
