@@ -1,0 +1,33 @@
+note over selain
+Käyttäjä syöttää tekstikenttään "mustiinpano" ja painaa
+"talleta".
+end note
+
+selain->palvelin: HTTP POST /new_note [{ note: "muistiinpano" }]
+
+note over palvelin
+Palvelin tallentaa muistiinpanon ja uudelleenohjaa käyttäjän
+lataamaan sivun "/notes" uudelleen näkymän päivittämiseksi.
+end note
+palvelin-->selain: REDIRECT /notes
+
+selain->palvelin: HTTP GET /notes
+palvelin-->selain: HTML-koodi
+selain->palvelin: HTTP GET /main.css
+palvelin-->selain: main.css
+selain->palvelin: HTTP GET /main.js
+palvelin-->selain: main.js
+
+note over selain
+main.js suoritetaan, HTML-sivun täydentämiseksi skripti
+haluaa dataa palvelimelta.
+end note
+
+selain->palvelin: HTTP GET /data.json
+palvelin-->selain: data.json
+
+note over selain
+main.js:ssa on määritetty tapahtumakäsittelijä, joka
+suoritetaan kun data.json vastaanotetaan. Selain parsii
+vastaanotetun datan ja lisää muistiinpanot listaan.
+end note
