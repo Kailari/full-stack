@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
+import Notification from './components/Notification'
 import personsService from './services/persons'
 
 const App = () => {
@@ -9,6 +10,12 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState('')
+  const [notification, setNotification] = useState(null)
+
+  const notify = (title, text, type) => {
+    setNotification({ title, text, type })
+    setTimeout(() => { setNotification(null) }, 5000)
+  }
 
   useEffect(() => {
     personsService
@@ -23,33 +30,37 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewNumber('')
         setNewName('')
+
+        notify('Toiminto onnistui', `Lisättiin "${returnedPerson.name}".`, 'success')
       })
       .catch(error => {
-        alert('Henkilön lisäys epäonnistui!')
+        notify('Virhe!', 'Henkilön lisäys epäonnistui!', 'failure')
       })
-  }
-
-  const updatePerson = (updatedPerson) => {
-    personsService
+    }
+    
+    const updatePerson = (updatedPerson) => {
+      personsService
       .update(updatedPerson.id, updatedPerson)
       .then(returnedPerson => {
         setPersons(persons.map(person => person.id !== updatedPerson.id ? person : returnedPerson))
+        
+        notify('Toiminto onnistui', `Tietojen päivitys onnistui.`, 'success')
       })
       .catch(error => {
-        alert(`Numeron lisäys henkilölle "${updatedPerson.name}" epäonnistui.`)
+        notify('Virhe!', `Numeron lisäys henkilölle "${updatedPerson.name}" epäonnistui.`, 'failure')
       })
-  }
-
-  const removePerson = (name, id) => event => {
-    if (window.confirm(`Poistetaanko "${name}"?`)) {
-      personsService
+    }
+    
+    const removePerson = (name, id) => event => {
+      if (window.confirm(`Poistetaanko "${name}"?`)) {
+        personsService
         .remove(id)
         .then(() => {
-          console.log(`Poistettiin ”${name}"`)
           setPersons(persons.filter(person => person.id !== id))
+          notify('Toiminto onnistui', `Poistettiin ”${name}" onnistuneesti.`, 'success')
         })
         .catch(() => {
-          alert(`Henkilöä "${name}" ei voitu poistaa!`)
+          notify('Virhe!', `Henkilöä "${name}" ei voitu poistaa!`, 'failure')
           setPersons(persons.filter(person => person.id !== id))
         })
     }
@@ -58,7 +69,7 @@ const App = () => {
   const handleClickAdd = event => {
     event.preventDefault()
     if (newName === '') {
-      alert('nimi ei voi olla tyhjä!')
+      notify('Virhe!', 'Nimi ei voi olla tyhjä!', 'failure')
       return
     }
 
@@ -73,6 +84,7 @@ const App = () => {
   return (
     <div>
       <h2>Puhelinluettelo</h2>
+      <Notification message={notification} />
       <Filter filterValue={nameFilter} filterSetter={setNameFilter} />
 
       <h3>Lisää uusi</h3>

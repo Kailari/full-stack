@@ -1,5 +1,25 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
+.notification {
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.notification h2 {
+  margin-top: 5px;
+  margin-bottom: 7px;
+}
+
+.notification p {
+  margin-top: 5px;
+}
+
+.notification.success {
+  color: green;
+}
+
+.notification.failure {
+  color: red;
 }
